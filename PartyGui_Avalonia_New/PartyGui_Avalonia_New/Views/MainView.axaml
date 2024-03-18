@@ -73,6 +73,23 @@
                          Width="380"
                          TextAlignment="Center"
                          TextChanged="OutputDirTextbox_OnTextChanged" />
+
+                <!-- Creator URL Controls -->
+                <Label Grid.Row="1" Grid.Column="0"
+                       Margin="5"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Name="CreatorUrlLabel">
+                    Creator URL:
+                </Label>
+                <TextBox Grid.Row="1" Grid.Column="1"
+                         Margin="5"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center"
+                         Name="CreatorUrlTextbox"
+                         Width="380"
+                         TextAlignment="Center"
+                         TextChanged="CreatorUrlTextbox_OnTextChanged" />
             </Grid>
         </StackPanel>
     </StackPanel>

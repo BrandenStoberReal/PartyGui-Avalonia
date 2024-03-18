@@ -48,4 +48,9 @@ public partial class MainView : UserControl
     {
         OutputDirectory = OutputDirTextbox.Text;
     }
+
+    private void CreatorUrlTextbox_OnTextChanged(object? sender, TextChangedEventArgs e)
+    {
+        if (creatorUrlRegex.IsMatch(CreatorUrlTextbox.Text)) CreatorURL = CreatorUrlTextbox.Text;
+    }
 }
