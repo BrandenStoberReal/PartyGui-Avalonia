@@ -14,10 +14,8 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
-                <ResourceDictionary x:Key='Light'>
-                </ResourceDictionary>
-                <ResourceDictionary x:Key='Dark'>
-                </ResourceDictionary>
+                <ResourceDictionary x:Key='Light' />
+                <ResourceDictionary x:Key='Dark' />
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
     </Window.Resources>
