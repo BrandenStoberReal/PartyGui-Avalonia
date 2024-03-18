@@ -17,14 +17,6 @@
     <StackPanel>
         <!-- Theme Button Bar -->
         <StackPanel>
-            <!-- Top Bar Barrier Lines (vertical) -->
-            <Canvas>
-                <Line StartPoint="100,0" EndPoint="100,48"
-                      Stroke="{DynamicResource LineBrush}" />
-                <Line StartPoint="700,0" EndPoint="700,48"
-                      Stroke="{DynamicResource LineBrush}" />
-            </Canvas>
-
             <!-- Controls -->
             <Grid ColumnDefinitions="100, 600, 100" RowDefinitions="Auto" ShowGridLines="False">
                 <actipro:ToggleThemeButton Grid.Row="0" Grid.Column="0"
@@ -42,12 +34,6 @@
                            Margin="10"
                            Text="{Binding Version}" />
             </Grid>
-        </StackPanel>
-
-        <!-- Line Bar -->
-        <StackPanel>
-            <Line HorizontalAlignment="Center" VerticalAlignment="Center" StartPoint="0,0" EndPoint="780,0"
-                  Stroke="{DynamicResource LineBrush}" Stretch="UniformToFill" Name="TopLine" />
         </StackPanel>
 
         <!-- Interactive Controls Space -->
