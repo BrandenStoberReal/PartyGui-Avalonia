@@ -24,7 +24,7 @@ public partial class MainView : UserControl
     private int NumberOfPosts { get; set; }
 
     private bool PostSubfolders { get; set; } = true;
-    private bool DownloadDescriptions { get; set; } = false;
+    private bool DownloadDescriptions { get; set; }
     private bool OverrideFileTime { get; set; } = true;
     private string OutputDirectory { get; set; }
 
@@ -64,5 +64,20 @@ public partial class MainView : UserControl
         catch
         {
         }
+    }
+
+    private void PostSubfolderToggle_OnIsCheckedChanged(object? sender, RoutedEventArgs e)
+    {
+        PostSubfolders = (bool)PostSubfolderToggle.IsChecked!;
+    }
+
+    private void PostDescriptionsToggle_OnIsCheckedChanged(object? sender, RoutedEventArgs e)
+    {
+        DownloadDescriptions = (bool)PostDescriptionsToggle.IsChecked!;
+    }
+
+    private void PostFileTimeToggle_OnIsCheckedChanged(object? sender, RoutedEventArgs e)
+    {
+        OverrideFileTime = (bool)PostFileTimeToggle.IsChecked!;
     }
 }
