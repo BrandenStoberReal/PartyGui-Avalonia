@@ -1,6 +1,8 @@
+using System;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Styling;
 using PartyGui_Avalonia_New.ViewModels;
 using PartyGui_Avalonia_New.Views;
 

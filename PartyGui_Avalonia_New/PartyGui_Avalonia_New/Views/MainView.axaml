@@ -2,15 +2,51 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:vm="clr-namespace:PartyGui_Avalonia_New.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PartyGui_Avalonia_New.Views.MainView"
              x:DataType="vm:MainViewModel">
-  <Design.DataContext>
-    <!-- This only sets the DataContext for the previewer in an IDE,
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-    <vm:MainViewModel />
-  </Design.DataContext>
+        <vm:MainViewModel />
+    </Design.DataContext>
 
-  <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <StackPanel>
+        <!-- Theme Button Bar -->
+        <StackPanel>
+            <!-- Top Bar Barrier Lines (vertical) -->
+            <Canvas>
+                <Line StartPoint="100,0" EndPoint="100,48"
+                      Stroke="{DynamicResource LineBrush}" />
+                <Line StartPoint="700,0" EndPoint="700,48"
+                      Stroke="{DynamicResource LineBrush}" />
+            </Canvas>
+
+            <!-- Controls -->
+            <Grid ColumnDefinitions="100, 600, 100" RowDefinitions="Auto" ShowGridLines="False">
+                <actipro:ToggleThemeButton Grid.Row="0" Grid.Column="0"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Margin="10" />
+                <TextBlock Grid.Row="0" Grid.Column="1"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Margin="10"
+                           Text="{Binding Title}" />
+                <TextBlock Grid.Row="0" Grid.Column="2"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Margin="10"
+                           Text="{Binding Version}" />
+            </Grid>
+        </StackPanel>
+
+        <!-- Line Bar -->
+        <StackPanel>
+            <Line HorizontalAlignment="Center" VerticalAlignment="Center" StartPoint="0,0" EndPoint="780,0"
+                  Stroke="{DynamicResource LineBrush}" Stretch="UniformToFill" Name="TopLine" />
+        </StackPanel>
+    </StackPanel>
 </UserControl>

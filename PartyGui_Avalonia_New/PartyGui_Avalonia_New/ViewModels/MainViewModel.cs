@@ -2,7 +2,7 @@
 
 public class MainViewModel : ViewModelBase
 {
-#pragma warning disable CA1822 // Mark members as static
+    public string Title => "PartyGUI";
+    public string Version => "v1.0.0-alpha";
     public string Greeting => "Welcome to Avalonia!";
-#pragma warning restore CA1822 // Mark members as static
 }

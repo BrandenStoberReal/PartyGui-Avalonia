@@ -4,8 +4,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PartyGui_Avalonia_New", "Pa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PartyGui_Avalonia_New.Desktop", "PartyGui_Avalonia_New\PartyGui_Avalonia_New.Desktop\PartyGui_Avalonia_New.Desktop.csproj", "{3EC504F8-260A-4C39-98D0-82BE4B4C3925}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PartyGui_Avalonia_New.Browser", "PartyGui_Avalonia_New\PartyGui_Avalonia_New.Browser\PartyGui_Avalonia_New.Browser.csproj", "{50320B89-B920-47DB-A65A-05E076708D1D}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,9 +18,5 @@ Global
 		{3EC504F8-260A-4C39-98D0-82BE4B4C3925}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EC504F8-260A-4C39-98D0-82BE4B4C3925}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3EC504F8-260A-4C39-98D0-82BE4B4C3925}.Release|Any CPU.Build.0 = Release|Any CPU
-		{50320B89-B920-47DB-A65A-05E076708D1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{50320B89-B920-47DB-A65A-05E076708D1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{50320B89-B920-47DB-A65A-05E076708D1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{50320B89-B920-47DB-A65A-05E076708D1D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
