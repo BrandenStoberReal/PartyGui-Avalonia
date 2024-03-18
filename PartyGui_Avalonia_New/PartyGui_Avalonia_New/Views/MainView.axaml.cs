@@ -21,7 +21,7 @@ public partial class MainView : UserControl
 
     private string CreatorURL { get; set; } = string.Empty;
 
-    private int NumberOfPosts { get; set; } = 0;
+    private int NumberOfPosts { get; set; }
 
     private bool PostSubfolders { get; set; } = true;
     private bool DownloadDescriptions { get; set; } = false;
@@ -41,16 +41,28 @@ public partial class MainView : UserControl
         options.AllowMultiple = false;
 
         var pickedFolders = await StorageProvider.OpenFolderPickerAsync(options);
-        if (pickedFolders.Count > 0) OutputDirTextbox.Text = pickedFolders.FirstOrDefault().Path.AbsolutePath;
+        if (pickedFolders.Count > 0) OutputDirTextbox.Text = pickedFolders.First().Path.AbsolutePath;
     }
 
     private void OutputDirTextbox_OnTextChanged(object? sender, TextChangedEventArgs e)
     {
-        OutputDirectory = OutputDirTextbox.Text;
+        if (OutputDirTextbox.Text != null) OutputDirectory = OutputDirTextbox.Text;
     }
 
     private void CreatorUrlTextbox_OnTextChanged(object? sender, TextChangedEventArgs e)
     {
-        if (creatorUrlRegex.IsMatch(CreatorUrlTextbox.Text)) CreatorURL = CreatorUrlTextbox.Text;
+        if (CreatorUrlTextbox.Text != null && creatorUrlRegex.IsMatch(CreatorUrlTextbox.Text))
+            CreatorURL = CreatorUrlTextbox.Text;
+    }
+
+    private void PostNumTextbox_OnTextChanged(object? sender, TextChangedEventArgs e)
+    {
+        try
+        {
+            if (PostNumTextbox.Text != null) NumberOfPosts = int.Parse(PostNumTextbox.Text);
+        }
+        catch
+        {
+        }
     }
 }
