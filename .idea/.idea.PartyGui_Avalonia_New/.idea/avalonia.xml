@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="PartyGui_Avalonia_New/PartyGui_Avalonia_New/App.axaml" value="PartyGui_Avalonia_New/PartyGui_Avalonia_New.Browser/PartyGui_Avalonia_New.Browser.csproj" />
+        <entry key="PartyGui_Avalonia_New/PartyGui_Avalonia_New/Views/MainView.axaml" value="PartyGui_Avalonia_New/PartyGui_Avalonia_New.Browser/PartyGui_Avalonia_New.Browser.csproj" />
+      </map>
+    </option>
+  </component>
+</project>
