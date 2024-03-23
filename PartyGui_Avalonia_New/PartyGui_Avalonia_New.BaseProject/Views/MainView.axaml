@@ -133,6 +133,7 @@
                               HorizontalAlignment="Right"
                               VerticalAlignment="Center"
                               Name="PostFileTimeToggle"
+                              IsChecked="True"
                               IsCheckedChanged="PostFileTimeToggle_OnIsCheckedChanged" />
             </Grid>
         </StackPanel>
