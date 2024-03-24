@@ -38,108 +38,106 @@
         </StackPanel>
 
         <!-- Interactive Controls Space -->
-        <Border BorderBrush="{DynamicResource LineBrush}" BorderThickness="1.5">
-            <StackPanel>
-                <Grid ColumnDefinitions="Auto, Auto, 270, 80" RowDefinitions="Auto, Auto, Auto, Auto" Margin="10">
-                    <!-- Output Dir Controls -->
-                    <Button Grid.Row="0" Grid.Column="0"
-                            Margin="5"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Name="OutputDirButton"
-                            Click="OutputDirButton_OnClick">
-                        Browse...
-                    </Button>
-                    <TextBox Grid.Row="0" Grid.Column="1"
-                             Margin="5"
-                             HorizontalAlignment="Left"
-                             VerticalAlignment="Center"
-                             Watermark="Output Directory"
-                             IsEnabled="False"
-                             IsReadOnly="True"
-                             Name="OutputDirTextbox"
-                             Width="320"
-                             TextAlignment="Center"
-                             TextChanged="OutputDirTextbox_OnTextChanged" />
+        <StackPanel>
+            <Grid ColumnDefinitions="Auto, Auto, 270, 80" RowDefinitions="Auto, Auto, Auto, Auto" Margin="10">
+                <!-- Output Dir Controls -->
+                <Button Grid.Row="0" Grid.Column="0"
+                        Margin="5"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Name="OutputDirButton"
+                        Click="OutputDirButton_OnClick">
+                    Browse...
+                </Button>
+                <TextBox Grid.Row="0" Grid.Column="1"
+                         Margin="5"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Center"
+                         Watermark="Output Directory"
+                         IsEnabled="False"
+                         IsReadOnly="True"
+                         Name="OutputDirTextbox"
+                         Width="320"
+                         TextAlignment="Center"
+                         TextChanged="OutputDirTextbox_OnTextChanged" />
 
-                    <!-- Creator URL Controls -->
-                    <Label Grid.Row="1" Grid.Column="0"
-                           Margin="5"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Name="CreatorUrlLabel">
-                        Creator URL:
-                    </Label>
-                    <TextBox Grid.Row="1" Grid.Column="1"
-                             Margin="5"
-                             HorizontalAlignment="Left"
-                             VerticalAlignment="Center"
-                             Name="CreatorUrlTextbox"
-                             Width="320"
-                             TextAlignment="Center"
-                             TextChanged="CreatorUrlTextbox_OnTextChanged" />
+                <!-- Creator URL Controls -->
+                <Label Grid.Row="1" Grid.Column="0"
+                       Margin="5"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Name="CreatorUrlLabel">
+                    Creator URL:
+                </Label>
+                <TextBox Grid.Row="1" Grid.Column="1"
+                         Margin="5"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Center"
+                         Name="CreatorUrlTextbox"
+                         Width="320"
+                         TextAlignment="Center"
+                         TextChanged="CreatorUrlTextbox_OnTextChanged" />
 
-                    <!-- Post Number Controls -->
-                    <Label Grid.Row="2" Grid.Column="0"
-                           Margin="5"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Name="PostNumLabel">
-                        Posts:
-                    </Label>
-                    <TextBox Grid.Row="2" Grid.Column="1"
-                             Margin="5"
-                             HorizontalAlignment="Left"
-                             VerticalAlignment="Center"
-                             Name="PostNumTextbox"
-                             Width="80"
-                             TextAlignment="Center"
-                             TextChanged="PostNumTextbox_OnTextChanged" />
+                <!-- Post Number Controls -->
+                <Label Grid.Row="2" Grid.Column="0"
+                       Margin="5"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Name="PostNumLabel">
+                    Posts:
+                </Label>
+                <TextBox Grid.Row="2" Grid.Column="1"
+                         Margin="5"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Center"
+                         Name="PostNumTextbox"
+                         Width="80"
+                         TextAlignment="Center"
+                         TextChanged="PostNumTextbox_OnTextChanged" />
 
-                    <!-- Toggles -->
-                    <Label Grid.Row="0" Grid.Column="2"
-                           Margin="5"
-                           HorizontalAlignment="Right"
-                           VerticalAlignment="Center">
-                        Create Post Subfolders:
-                    </Label>
-                    <ToggleSwitch Grid.Row="0" Grid.Column="3"
-                                  Margin="5"
-                                  HorizontalAlignment="Right"
-                                  VerticalAlignment="Center"
-                                  IsChecked="True"
-                                  Name="PostSubfolderToggle"
-                                  IsCheckedChanged="PostSubfolderToggle_OnIsCheckedChanged" />
+                <!-- Toggles -->
+                <Label Grid.Row="0" Grid.Column="2"
+                       Margin="5"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center">
+                    Create Post Subfolders:
+                </Label>
+                <ToggleSwitch Grid.Row="0" Grid.Column="3"
+                              Margin="5"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Center"
+                              IsChecked="True"
+                              Name="PostSubfolderToggle"
+                              IsCheckedChanged="PostSubfolderToggle_OnIsCheckedChanged" />
 
-                    <Label Grid.Row="1" Grid.Column="2"
-                           Margin="5"
-                           HorizontalAlignment="Right"
-                           VerticalAlignment="Center">
-                        Download Descriptions:
-                    </Label>
-                    <ToggleSwitch Grid.Row="1" Grid.Column="3"
-                                  Margin="5"
-                                  HorizontalAlignment="Right"
-                                  VerticalAlignment="Center"
-                                  Name="PostDescriptionsToggle"
-                                  IsCheckedChanged="PostDescriptionsToggle_OnIsCheckedChanged" />
+                <Label Grid.Row="1" Grid.Column="2"
+                       Margin="5"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center">
+                    Download Descriptions:
+                </Label>
+                <ToggleSwitch Grid.Row="1" Grid.Column="3"
+                              Margin="5"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Center"
+                              Name="PostDescriptionsToggle"
+                              IsCheckedChanged="PostDescriptionsToggle_OnIsCheckedChanged" />
 
-                    <Label Grid.Row="2" Grid.Column="2"
-                           Margin="5"
-                           HorizontalAlignment="Right"
-                           VerticalAlignment="Center">
-                        Modify File Dates:
-                    </Label>
-                    <ToggleSwitch Grid.Row="2" Grid.Column="3"
-                                  Margin="5"
-                                  HorizontalAlignment="Right"
-                                  VerticalAlignment="Center"
-                                  Name="PostFileTimeToggle"
-                                  IsChecked="True"
-                                  IsCheckedChanged="PostFileTimeToggle_OnIsCheckedChanged" />
-                </Grid>
-            </StackPanel>
-        </Border>
+                <Label Grid.Row="2" Grid.Column="2"
+                       Margin="5"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center">
+                    Modify File Dates:
+                </Label>
+                <ToggleSwitch Grid.Row="2" Grid.Column="3"
+                              Margin="5"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Center"
+                              Name="PostFileTimeToggle"
+                              IsChecked="True"
+                              IsCheckedChanged="PostFileTimeToggle_OnIsCheckedChanged" />
+            </Grid>
+        </StackPanel>
 
         <!-- Scrape Button & Accessories -->
         <StackPanel>
