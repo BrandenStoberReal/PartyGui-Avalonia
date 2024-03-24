@@ -19,37 +19,84 @@ namespace PartyGui_Avalonia_New.Views;
 
 public partial class MainView : UserControl
 {
+    /// <summary>
+    ///     Shouldn't really need to be used, only for sanitization of creator URL textbox.
+    /// </summary>
     private readonly Regex creatorUrlRegex = new("https://[A-Za-z0-9]+\\.su/[A-Za-z0-9]+/user/[A-Za-z0-9]+");
 
+    /// <summary>
+    ///     Main UI StorageProvider.
+    /// </summary>
     private IStorageProvider StorageProvider;
+
+    /// <summary>
+    ///     TopMost UI
+    /// </summary>
     private TopLevel window;
 
+    /// <summary>
+    ///     Public constructor for the view.
+    /// </summary>
     public MainView()
     {
         InitializeComponent();
     }
 
+    /// <summary>
+    ///     URL of the creator to scrape content from.
+    /// </summary>
     private string CreatorURL { get; set; } = string.Empty;
 
+    /// <summary>
+    ///     Number of creator posts to scrape.
+    /// </summary>
     private int NumberOfPosts { get; set; }
 
+    /// <summary>
+    ///     Whether to create a subfolder for each post or not.
+    /// </summary>
     private bool PostSubfolders { get; set; } = true;
+
+    /// <summary>
+    ///     Whether to download post descriptions alongside attachments.
+    /// </summary>
     private bool DownloadDescriptions { get; set; }
+
+    /// <summary>
+    ///     Whether to override the OS file modification times for every attachment.
+    /// </summary>
     private bool OverrideFileTime { get; set; } = true;
+
+    /// <summary>
+    ///     Output directory where scraped content will be dumped.
+    /// </summary>
     private string OutputDirectory { get; set; }
 
+    /// <summary>
+    ///     Attempts to disable all clickable buttons on the main GUI.
+    /// </summary>
     private void DisableBoxes()
     {
         ScrapeButton.IsEnabled = false;
         OutputDirButton.IsEnabled = false;
     }
 
+    /// <summary>
+    ///     Attempts to enable all previously disabled clickable buttons on the main GUI.
+    /// </summary>
     private void EnableBoxes()
     {
         ScrapeButton.IsEnabled = true;
         OutputDirButton.IsEnabled = true;
     }
 
+    /// <summary>
+    ///     Shows a simple message box to the user. Compatible with all supported platforms.
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="title"></param>
+    /// <param name="buttons"></param>
+    /// <param name="icon"></param>
     private async void ShowMessageBox(string message, string title, ButtonEnum buttons = ButtonEnum.Ok,
         Icon icon = Icon.Info)
     {
@@ -59,6 +106,12 @@ public partial class MainView : UserControl
         EnableBoxes();
     }
 
+    /// <summary>
+    ///     Event called when the main view initializes. Should HOPEFULLY only be called on program startup.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    /// <exception cref="InvalidOperationException"></exception>
     private void Control_OnLoaded(object? sender, RoutedEventArgs e)
     {
         ScrapingManager.InitializeModules();
@@ -66,6 +119,11 @@ public partial class MainView : UserControl
         StorageProvider = window.StorageProvider;
     }
 
+    /// <summary>
+    ///     Button click event to select the output directory.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private async void OutputDirButton_OnClick(object? sender, RoutedEventArgs e)
     {
         var options = new FolderPickerOpenOptions();
@@ -76,17 +134,32 @@ public partial class MainView : UserControl
         if (pickedFolders.Count > 0) OutputDirTextbox.Text = pickedFolders.First().Path.AbsolutePath;
     }
 
+    /// <summary>
+    ///     Text changed event to handle setting the output directory variable.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void OutputDirTextbox_OnTextChanged(object? sender, TextChangedEventArgs e)
     {
         if (OutputDirTextbox.Text != null) OutputDirectory = OutputDirTextbox.Text;
     }
 
+    /// <summary>
+    ///     Text changed event to handle setting the creator URL variable. Checks against the creator regex.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void CreatorUrlTextbox_OnTextChanged(object? sender, TextChangedEventArgs e)
     {
         if (CreatorUrlTextbox.Text != null && creatorUrlRegex.IsMatch(CreatorUrlTextbox.Text))
             CreatorURL = CreatorUrlTextbox.Text;
     }
 
+    /// <summary>
+    ///     Text changed event to handle setting the post number variable. Sanitized to ensure text is an integer.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void PostNumTextbox_OnTextChanged(object? sender, TextChangedEventArgs e)
     {
         try
@@ -98,21 +171,41 @@ public partial class MainView : UserControl
         }
     }
 
+    /// <summary>
+    ///     Toggle event used to manage the post subfolder variable.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void PostSubfolderToggle_OnIsCheckedChanged(object? sender, RoutedEventArgs e)
     {
         PostSubfolders = (bool)PostSubfolderToggle.IsChecked!;
     }
 
+    /// <summary>
+    ///     Toggle event used to manage the post descriptions variable.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void PostDescriptionsToggle_OnIsCheckedChanged(object? sender, RoutedEventArgs e)
     {
         DownloadDescriptions = (bool)PostDescriptionsToggle.IsChecked!;
     }
 
+    /// <summary>
+    ///     Toggle event used to managed the file modification time variable.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void PostFileTimeToggle_OnIsCheckedChanged(object? sender, RoutedEventArgs e)
     {
         OverrideFileTime = (bool)PostFileTimeToggle.IsChecked!;
     }
 
+    /// <summary>
+    ///     Click event used to handle a scrape request. This is where all primary scraping logic is done.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private async void ScrapeButton_OnClick(object? sender, RoutedEventArgs e)
     {
         if (CreatorURL == string.Empty)
@@ -276,12 +369,23 @@ public partial class MainView : UserControl
         }).Start();
     }
 
+    /// <summary>
+    ///     Event handler called whenever an attachment's download progress increments. Used primarily for progress bars.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="eventargs"></param>
+    /// <param name="filename"></param>
     private void Downloader_DownloadProgressed(object sender, DownloadProgressChangedEventArgs eventargs,
         string filename)
     {
         // Write progress bar updates here
     }
 
+    /// <summary>
+    ///     Event called when the main UI unloads. This should HOPEFULLY only be called on program exit.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void Control_OnUnloaded(object? sender, RoutedEventArgs e)
     {
         ScrapingManager.FlushSupplementaryMethods();
