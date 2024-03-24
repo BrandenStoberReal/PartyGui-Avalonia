@@ -38,13 +38,6 @@ public partial class MainView : UserControl
     private bool OverrideFileTime { get; set; } = true;
     private string OutputDirectory { get; set; }
 
-    private async void ShowMessageBox(string message, string title, ButtonEnum buttons = ButtonEnum.Ok,
-        Icon icon = Icon.Info)
-    {
-        var box = MessageBoxManager.GetMessageBoxStandard(title, message, buttons, icon);
-        await box.ShowAsync();
-    }
-
     private void DisableBoxes()
     {
         ScrapeButton.IsEnabled = false;
@@ -55,6 +48,15 @@ public partial class MainView : UserControl
     {
         ScrapeButton.IsEnabled = true;
         OutputDirButton.IsEnabled = true;
+    }
+
+    private async void ShowMessageBox(string message, string title, ButtonEnum buttons = ButtonEnum.Ok,
+        Icon icon = Icon.Info)
+    {
+        DisableBoxes();
+        var box = MessageBoxManager.GetMessageBoxStandard(title, message, buttons, icon);
+        await box.ShowAsync();
+        EnableBoxes();
     }
 
     private void Control_OnLoaded(object? sender, RoutedEventArgs e)
@@ -214,7 +216,7 @@ public partial class MainView : UserControl
                             Dispatcher.UIThread.InvokeAsync(() => { downloadProgressBar.Value = 0; });
                             */
                             var success = downloader.DownloadContent(attach.URL, DownloadDir, attach.Name,
-                                connections: 5);
+                                connections: 8);
                             if (success)
                             {
                                 if (OverrideFileTime)
