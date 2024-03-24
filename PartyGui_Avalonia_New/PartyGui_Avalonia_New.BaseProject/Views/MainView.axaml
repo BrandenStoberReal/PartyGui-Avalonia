@@ -7,7 +7,8 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="PartyGui_Avalonia_New.Views.MainView"
              x:DataType="vm:MainViewModel"
-             Loaded="Control_OnLoaded">
+             Loaded="Control_OnLoaded"
+             Unloaded="Control_OnUnloaded">
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
@@ -136,6 +137,15 @@
                               IsChecked="True"
                               IsCheckedChanged="PostFileTimeToggle_OnIsCheckedChanged" />
             </Grid>
+            <!-- Scrape Button & Accessories -->
+            <StackPanel>
+                <Button HorizontalAlignment="Center" VerticalAlignment="Center"
+                        Margin="5"
+                        Name="ScrapeButton"
+                        Click="ScrapeButton_OnClick">
+                    Scrape
+                </Button>
+            </StackPanel>
         </StackPanel>
     </StackPanel>
 </UserControl>
