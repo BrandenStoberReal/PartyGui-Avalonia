@@ -11,10 +11,16 @@ PartyGUI is an improvement of the troubled development processes plaguing my pre
 All the features of the original PartyLib, plus:
 </p>
 <p align=center>
-Cross platform (Linux, Windows, MacOS)
+Cross platform compatibility (Linux, Windows, MacOS)
 </p>
-- Orobouros-run module-based backend
-- Majorly rewritten foundational code
-- Downloading overhaul
+<p align=center>
+Orobouros-run module-based backend
+</p>
+<p align=center>
+Majorly rewritten foundational code
+</p>
+<p align=center>
+Downloading overhaul
+</p>
 
 And more planned features!
