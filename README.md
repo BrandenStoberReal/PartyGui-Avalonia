@@ -8,7 +8,9 @@ PartyGUI is an improvement of the troubled development processes plaguing my pre
 
 <h1 align=center>Features</H1>
 <p align=center>
+<strong>
 All the features of the original PartyLib, plus:
+</strong>
 </p>
 <p align=center>
 Cross platform compatibility (Linux, Windows, MacOS)
@@ -23,4 +25,4 @@ Majorly rewritten foundational code
 Downloading framework overhaul
 </p>
 
-<p align=center><bold>And more planned features!</bold></p>
+<p align=center><strong>And more planned features!</strong></p>
