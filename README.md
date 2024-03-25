@@ -23,4 +23,4 @@ Majorly rewritten foundational code
 Downloading framework overhaul
 </p>
 
-And more planned features!
+<p align=center><bold>And more planned features!</bold></p>
