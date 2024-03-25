@@ -13,12 +13,13 @@ using MsBox.Avalonia.Enums;
 using Orobouros;
 using Orobouros.Managers;
 using Orobouros.Tools.Web;
-using DownloadProgressChangedEventArgs = Downloader.DownloadProgressChangedEventArgs;
 
 namespace PartyGui_Avalonia_New.Views;
 
 public partial class MainView : UserControl
 {
+    private readonly Regex attachmentUrlRegex = new(@"\?f=(.*)");
+
     /// <summary>
     ///     Shouldn't really need to be used, only for sanitization of creator URL textbox.
     /// </summary>
@@ -104,6 +105,26 @@ public partial class MainView : UserControl
         var box = MessageBoxManager.GetMessageBoxStandard(title, message, buttons, icon);
         await box.ShowAsync();
         EnableBoxes();
+    }
+
+    private void IncrementProgressBar(ProgressBar bar)
+    {
+        Dispatcher.UIThread.InvokeAsync(() => { bar.Value++; });
+    }
+
+    private void SetProgressBarMaximum(ProgressBar bar, int max)
+    {
+        Dispatcher.UIThread.InvokeAsync(() => { bar.Maximum = max; });
+    }
+
+    private void ClearProgressBar(ProgressBar bar)
+    {
+        Dispatcher.UIThread.InvokeAsync(() => { bar.Value = 0; });
+    }
+
+    private void SetProgressBarValue(ProgressBar bar, double value)
+    {
+        Dispatcher.UIThread.InvokeAsync(() => { bar.Value = value; });
     }
 
     /// <summary>
@@ -247,31 +268,30 @@ public partial class MainView : UserControl
             var data = ScrapingManager.ScrapeURL(CreatorURL, requestedInfo, NumberOfPosts);
             if (data != null)
             {
+                SetProgressBarMaximum(DownloadProgressBar, 100);
+                SetProgressBarMaximum(PostsProgressBar, data.Content.Count);
                 /*
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    downloadProgressBar.Maximum = 100;
-                    postsProgressBar.Maximum = data.Content.Count;
                     outputLabel.Text = "Beginning downloader setup...";
                 });
                 */
 
                 var iteration = 0;
-                var downloader = new DownloadManager();
-                downloader.DownloadProgressed += Downloader_DownloadProgressed;
                 foreach (var scrapeData in data.Content)
                 {
                     // Download the attachments
                     var post = (Post)scrapeData.Value;
                     iteration++;
 
+                    ClearProgressBar(DownloadProgressBar);
+                    ClearProgressBar(AttachmentsProgressBar);
+                    IncrementProgressBar(PostsProgressBar);
+                    SetProgressBarMaximum(AttachmentsProgressBar, post.Attachments.Count);
+
                     /*
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        downloadProgressBar.Value = 0;
-                        attachmentsProgressBar.Value = 0;
-                        postsProgressBar.PerformStep();
-                        attachmentsProgressBar.Maximum = post.Attachments.Count;
                         outputLabel.Text = $"Downloading post #{iteration}/{data.Content.Count}";
                     });
                     */
@@ -299,19 +319,32 @@ public partial class MainView : UserControl
 
                     // Begin downloading attachments
                     foreach (var attach in post.Attachments)
-                        /*
-                        Dispatcher.UIThread.InvokeAsync(() => { attachmentsProgressBar.PerformStep(); });
-                        */
+                    {
+                        IncrementProgressBar(AttachmentsProgressBar);
                         // Attempt to download 5 times
                         for (var i = 0; i < 5; i++)
                         {
-                            /*
-                            Dispatcher.UIThread.InvokeAsync(() => { downloadProgressBar.Value = 0; });
-                            */
-                            var success = downloader.DownloadContent(attach.URL, DownloadDir, attach.Name,
-                                connections: 8);
-                            if (success)
+                            ClearProgressBar(DownloadProgressBar);
+
+                            // Download URL parsing
+                            string downloadUrl;
+                            if (attachmentUrlRegex.IsMatch(attach.URL))
+                                downloadUrl = attachmentUrlRegex.Replace(attach.URL, "");
+                            else
+                                downloadUrl = attach.URL;
+
+                            // Actual download method
+                            try
                             {
+                                var client = new HttpClientDownloadWithProgress(downloadUrl,
+                                    Path.Combine(DownloadDir, attach.Name));
+                                client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) =>
+                                {
+                                    SetProgressBarValue(DownloadProgressBar, (double)progressPercentage);
+                                };
+
+                                client.StartDownload().Wait();
+
                                 if (OverrideFileTime)
                                 {
                                     var handle = File.OpenHandle(Path.Combine(DownloadDir, attach.Name), FileMode.Open,
@@ -322,26 +355,31 @@ public partial class MainView : UserControl
                                     handle.Close();
                                 }
 
+                                client.Dispose();
                                 break;
                             }
-
-                            LoggingManager.LogWarning(
-                                $"Attachment \"{attach.Name}\" from URL \"{attach.URL}\" failed to download, retrying! [{i + 1}/5]");
-                            if (File.Exists(Path.Combine(DownloadDir, attach.Name)))
-                                File.Delete(Path.Combine(DownloadDir, attach.Name));
-                            var rng = new Random();
-                            // 15-60 seconds
-                            var waittime = rng.Next(15000, 60000);
-                            Thread.Sleep(waittime);
-                            LoggingManager.LogInformation(
-                                $"Waited {(int)Math.Floor((decimal)(waittime / 1000))} seconds, continuing...");
+                            catch (Exception ex)
+                            {
+                                LoggingManager.LogError("Exception: " + ex.Message);
+                                LoggingManager.LogWarning(
+                                    $"Attachment \"{attach.Name}\" from URL \"{downloadUrl}\" failed to download, retrying! [{i + 1}/5]");
+                                if (File.Exists(Path.Combine(DownloadDir, attach.Name)))
+                                    File.Delete(Path.Combine(DownloadDir, attach.Name));
+                                var rng = new Random();
+                                // 15-60 seconds
+                                var waittime = rng.Next(15000, 60000);
+                                Thread.Sleep(waittime);
+                                LoggingManager.LogInformation(
+                                    $"Waited {(int)Math.Floor((decimal)(waittime / 1000))} seconds, continuing...");
+                            }
                         }
 
-                    if (OverrideFileTime)
-                    {
-                        Directory.SetCreationTime(DownloadDir, (DateTime)post.UploadDate);
-                        Directory.SetLastAccessTime(DownloadDir, (DateTime)post.UploadDate);
-                        Directory.SetLastWriteTime(DownloadDir, (DateTime)post.UploadDate);
+                        if (OverrideFileTime)
+                        {
+                            Directory.SetCreationTime(DownloadDir, (DateTime)post.UploadDate);
+                            Directory.SetLastAccessTime(DownloadDir, (DateTime)post.UploadDate);
+                            Directory.SetLastWriteTime(DownloadDir, (DateTime)post.UploadDate);
+                        }
                     }
                 }
             }
@@ -355,12 +393,12 @@ public partial class MainView : UserControl
                 });
             }
 
+            ClearProgressBar(DownloadProgressBar);
+            ClearProgressBar(AttachmentsProgressBar);
+            ClearProgressBar(PostsProgressBar);
             /*
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                downloadProgressBar.Value = 0;
-                attachmentsProgressBar.Value = 0;
-                postsProgressBar.Value = 0;
                 outputProgress.Visible = false;
                 outputLabel.Text = "Idle...";
             });
@@ -369,16 +407,9 @@ public partial class MainView : UserControl
         }).Start();
     }
 
-    /// <summary>
-    ///     Event handler called whenever an attachment's download progress increments. Used primarily for progress bars.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="eventargs"></param>
-    /// <param name="filename"></param>
-    private void Downloader_DownloadProgressed(object sender, DownloadProgressChangedEventArgs eventargs,
-        string filename)
+    private void DownloadProgressed(long? totalfilesize, long totalbytesdownloaded, double? progresspercentage)
     {
-        // Write progress bar updates here
+        SetProgressBarValue(DownloadProgressBar, (double)progresspercentage);
     }
 
     /// <summary>

@@ -152,9 +152,12 @@
         <!-- Progress Bars At Bottom -->
         <StackPanel>
             <Grid ColumnDefinitions="Auto" RowDefinitions="Auto, Auto, Auto">
-                <ProgressBar Grid.Row="0" Margin="5" Width="780" Height="20" Name="DownloadProgressBar" />
-                <ProgressBar Grid.Row="1" Margin="5" Width="780" Height="20" Name="AttachmentsProgressBar" />
-                <ProgressBar Grid.Row="2" Margin="5" Width="780" Height="20" Name="PostsProgressBar" />
+                <ProgressBar Grid.Row="0" Margin="5" Width="790" Height="20" Name="DownloadProgressBar"
+                             HorizontalAlignment="Center" />
+                <ProgressBar Grid.Row="1" Margin="5" Width="790" Height="20" Name="AttachmentsProgressBar"
+                             HorizontalAlignment="Center" />
+                <ProgressBar Grid.Row="2" Margin="5" Width="790" Height="20" Name="PostsProgressBar"
+                             HorizontalAlignment="Center" />
             </Grid>
         </StackPanel>
     </StackPanel>
