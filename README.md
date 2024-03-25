@@ -20,7 +20,7 @@ Orobouros-run module-based backend
 Majorly rewritten foundational code
 </p>
 <p align=center>
-Downloading overhaul
+Downloading framework overhaul
 </p>
 
 And more planned features!
