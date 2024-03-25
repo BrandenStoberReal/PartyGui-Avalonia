@@ -2,4 +2,17 @@
 <p align=center><i>"Because PartyLib just kinda sucked"</i></p>
 
 <h1 align=center>Description</h1>
-<p align=center>PartyGUI is an improvement of the troubled development processes plaguing my previous works, such as PartyLib and the command line applications. This project is going to be the permanent and frequently updated version of the incomplete previous applications.</p>
+<p align=center>
+PartyGUI is an improvement of the troubled development processes plaguing my previous works, such as PartyLib and the command line applications. This project is going to be the permanent and frequently updated version of the incomplete previous applications.
+</p>
+
+<h1 align=center>Features</H1>
+<p align=center>
+All the features of the original PartyLib, plus:
+- Cross platform (Linux, Windows, MacOS)
+- Orobouros-run module-based backend
+- Majorly rewritten foundational code
+- Downloading overhaul
+
+And more planned features!
+</p>
