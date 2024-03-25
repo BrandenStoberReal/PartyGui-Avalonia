@@ -16,7 +16,7 @@ public class HttpClientDownloadWithProgress : IDisposable
 
     private HttpClient _httpClient;
 
-    private HttpClientHandler _httpClientHandler = new()
+    private readonly HttpClientHandler _httpClientHandler = new()
     {
         AllowAutoRedirect = true,
         AutomaticDecompression = DecompressionMethods.All,
@@ -38,10 +38,11 @@ public class HttpClientDownloadWithProgress : IDisposable
 
     public async Task StartDownload()
     {
-        _httpClient = new HttpClient
+        _httpClient = new HttpClient(_httpClientHandler)
         {
             Timeout = TimeSpan.FromDays(1),
-            DefaultRequestVersion = new Version("2.0.0")
+            DefaultRequestVersion = new Version("3.0.0"),
+            DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrLower
         };
 
         _httpClient.DefaultRequestHeaders.Add("User-Agent",
