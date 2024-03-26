@@ -6,48 +6,55 @@ using System.Security.Authentication;
 using System.Threading.Tasks;
 using Orobouros.Managers;
 
-public class HttpClientDownloadWithProgress : IDisposable
+public class HttpClientDownloadWithProgress(string downloadUrl, string destinationFilePath) : IDisposable
 {
+    /// <summary>
+    ///     Delegate for progress event.
+    /// </summary>
     public delegate void ProgressChangedHandler(long? totalFileSize, long totalBytesDownloaded,
         double? progressPercentage);
 
-    private readonly string _destinationFilePath;
-    private readonly string _downloadUrl;
-
-    private HttpClient _httpClient;
-
-    private readonly HttpClientHandler _httpClientHandler = new()
+    /// <summary>
+    ///     HttpClient class.
+    /// </summary>
+    private static readonly HttpClient HttpClient = new(new HttpClientHandler
     {
         AllowAutoRedirect = true,
         AutomaticDecompression = DecompressionMethods.All,
         SslProtocols = SslProtocols.Tls13
+    })
+    {
+        Timeout = TimeSpan.FromDays(1),
+        DefaultRequestVersion = new Version("3.0.0"),
+        DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrLower
     };
 
-    public HttpClientDownloadWithProgress(string downloadUrl, string destinationFilePath)
-    {
-        _downloadUrl = downloadUrl;
-        _destinationFilePath = destinationFilePath;
-    }
-
+    /// <summary>
+    ///     Custom dispose method.
+    /// </summary>
     public void Dispose()
     {
-        _httpClient?.Dispose();
+        HttpClient?.Dispose();
     }
 
-    public event ProgressChangedHandler ProgressChanged;
+    /// <summary>
+    ///     Event fired whenever progress is made.
+    /// </summary>
+    public event ProgressChangedHandler? ProgressChanged;
 
+    /// <summary>
+    ///     Starts a new download.
+    /// </summary>
     public async Task StartDownload()
     {
-        _httpClient = new HttpClient(_httpClientHandler)
-        {
-            Timeout = TimeSpan.FromDays(1),
-            DefaultRequestVersion = new Version("3.0.0"),
-            DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrLower
-        };
-
-        _httpClient.DefaultRequestHeaders.Add("User-Agent",
-            UserAgentManager.RandomDesktopUserAgent);
-        using (var response = await _httpClient.GetAsync(_downloadUrl, HttpCompletionOption.ResponseHeadersRead))
+        HttpClient.DefaultRequestHeaders.Add("User-Agent", UserAgentManager.RandomDesktopUserAgent);
+        HttpClient.DefaultRequestHeaders.Add("Accept", "*/*");
+        HttpClient.DefaultRequestHeaders.Add("Connection", "keep-alive");
+        HttpClient.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.5");
+        HttpClient.DefaultRequestHeaders.Add("Sec-Fetch-Site", "same-site");
+        HttpClient.DefaultRequestHeaders.Add("Sec-Fetch-Mode", "navigate");
+        HttpClient.DefaultRequestHeaders.Add("Sec-Fetch-Dest", "document");
+        using (var response = await HttpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead))
         {
             await DownloadFileFromHttpResponseMessage(response);
         }
@@ -72,7 +79,7 @@ public class HttpClientDownloadWithProgress : IDisposable
         var buffer = new byte[8192];
         var isMoreToRead = true;
 
-        using (var fileStream = new FileStream(_destinationFilePath, FileMode.Create, FileAccess.Write, FileShare.None,
+        using (var fileStream = new FileStream(destinationFilePath, FileMode.Create, FileAccess.Write, FileShare.None,
                    8192, true))
         {
             do

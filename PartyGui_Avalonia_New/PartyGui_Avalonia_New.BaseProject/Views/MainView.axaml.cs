@@ -71,7 +71,7 @@ public partial class MainView : UserControl
     /// <summary>
     ///     Output directory where scraped content will be dumped.
     /// </summary>
-    private string OutputDirectory { get; set; }
+    private string OutputDirectory { get; set; } = "";
 
     /// <summary>
     ///     Attempts to disable all clickable buttons on the main GUI.
@@ -355,7 +355,6 @@ public partial class MainView : UserControl
                                     handle.Close();
                                 }
 
-                                client.Dispose();
                                 break;
                             }
                             catch (Exception ex)
