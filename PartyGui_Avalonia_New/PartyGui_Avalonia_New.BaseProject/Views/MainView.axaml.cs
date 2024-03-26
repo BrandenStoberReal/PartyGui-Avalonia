@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Security.Authentication;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Avalonia.Controls;
@@ -336,14 +339,37 @@ public partial class MainView : UserControl
                             // Actual download method
                             try
                             {
-                                var client = new HttpClientDownloadWithProgress(downloadUrl,
-                                    Path.Combine(DownloadDir, attach.Name));
-                                client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) =>
+                                // Download code here
+                                IProgress<float> DownloadProgress =
+                                    new Progress<float>(s => SetProgressBarValue(DownloadProgressBar, s * 100));
+                                using (var client = new HttpClient(new HttpClientHandler
+                                       {
+                                           AllowAutoRedirect = true,
+                                           AutomaticDecompression = DecompressionMethods.All,
+                                           SslProtocols = SslProtocols.Tls13
+                                       }))
                                 {
-                                    SetProgressBarValue(DownloadProgressBar, (double)progressPercentage);
-                                };
+                                    client.Timeout = TimeSpan.FromMinutes(5);
+                                    client.DefaultRequestHeaders.Add("User-Agent",
+                                        UserAgentManager.RandomDesktopUserAgent);
+                                    client.DefaultRequestHeaders.Add("Accept", "*/*");
+                                    client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+                                    client.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.5");
+                                    client.DefaultRequestHeaders.Add("Sec-Fetch-Site", "same-site");
+                                    client.DefaultRequestHeaders.Add("Sec-Fetch-Mode", "navigate");
+                                    client.DefaultRequestHeaders.Add("Sec-Fetch-Dest", "document");
 
-                                client.StartDownload().Wait();
+                                    // Create a file stream to store the downloaded data.
+                                    // This really can be any type of writeable stream.
+                                    using (var file = new FileStream(Path.Combine(DownloadDir, attach.Name),
+                                               FileMode.Create, FileAccess.Write, FileShare.None))
+                                    {
+                                        // Use the custom extension method below to download the data.
+                                        // The passed progress-instance will receive the download status updates.
+                                        client.DownloadAsync(downloadUrl, file, DownloadProgress)
+                                            .Wait();
+                                    }
+                                }
 
                                 if (OverrideFileTime)
                                 {
