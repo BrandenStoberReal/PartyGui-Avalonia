@@ -340,7 +340,7 @@ public partial class MainView : UserControl
                             try
                             {
                                 // Download code here
-                                IProgress<float> DownloadProgress =
+                                IProgress<float> downloadProgress =
                                     new Progress<float>(s => SetProgressBarValue(DownloadProgressBar, s * 100));
                                 using (var client = new HttpClient(new HttpClientHandler
                                        {
@@ -366,7 +366,7 @@ public partial class MainView : UserControl
                                     {
                                         // Use the custom extension method below to download the data.
                                         // The passed progress-instance will receive the download status updates.
-                                        client.DownloadAsync(downloadUrl, file, DownloadProgress)
+                                        client.DownloadAsync(downloadUrl, file, downloadProgress)
                                             .Wait();
                                     }
                                 }
