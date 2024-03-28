@@ -23,6 +23,13 @@ public partial class MainView : UserControl
 {
     private readonly Regex attachmentUrlRegex = new(@"\?f=(.*)");
 
+    private readonly HttpClient client = new(new HttpClientHandler
+    {
+        AllowAutoRedirect = true,
+        AutomaticDecompression = DecompressionMethods.All,
+        SslProtocols = SslProtocols.Tls13
+    });
+
     /// <summary>
     ///     Shouldn't really need to be used, only for sanitization of creator URL textbox.
     /// </summary>
@@ -141,6 +148,15 @@ public partial class MainView : UserControl
         ScrapingManager.InitializeModules();
         window = TopLevel.GetTopLevel(this) ?? throw new InvalidOperationException();
         StorageProvider = window.StorageProvider;
+        client.Timeout = TimeSpan.FromMinutes(5);
+        client.DefaultRequestHeaders.Add("User-Agent",
+            UserAgentManager.RandomDesktopUserAgent);
+        client.DefaultRequestHeaders.Add("Accept", "*/*");
+        client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+        client.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.5");
+        client.DefaultRequestHeaders.Add("Sec-Fetch-Site", "same-site");
+        client.DefaultRequestHeaders.Add("Sec-Fetch-Mode", "navigate");
+        client.DefaultRequestHeaders.Add("Sec-Fetch-Dest", "document");
     }
 
     /// <summary>
@@ -342,33 +358,16 @@ public partial class MainView : UserControl
                                 // Download code here
                                 IProgress<float> downloadProgress =
                                     new Progress<float>(s => SetProgressBarValue(DownloadProgressBar, s * 100));
-                                using (var client = new HttpClient(new HttpClientHandler
-                                       {
-                                           AllowAutoRedirect = true,
-                                           AutomaticDecompression = DecompressionMethods.All,
-                                           SslProtocols = SslProtocols.Tls13
-                                       }))
-                                {
-                                    client.Timeout = TimeSpan.FromMinutes(5);
-                                    client.DefaultRequestHeaders.Add("User-Agent",
-                                        UserAgentManager.RandomDesktopUserAgent);
-                                    client.DefaultRequestHeaders.Add("Accept", "*/*");
-                                    client.DefaultRequestHeaders.Add("Connection", "keep-alive");
-                                    client.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.5");
-                                    client.DefaultRequestHeaders.Add("Sec-Fetch-Site", "same-site");
-                                    client.DefaultRequestHeaders.Add("Sec-Fetch-Mode", "navigate");
-                                    client.DefaultRequestHeaders.Add("Sec-Fetch-Dest", "document");
 
-                                    // Create a file stream to store the downloaded data.
-                                    // This really can be any type of writeable stream.
-                                    using (var file = new FileStream(Path.Combine(DownloadDir, attach.Name),
-                                               FileMode.Create, FileAccess.Write, FileShare.None))
-                                    {
-                                        // Use the custom extension method below to download the data.
-                                        // The passed progress-instance will receive the download status updates.
-                                        client.DownloadAsync(downloadUrl, file, downloadProgress)
-                                            .Wait();
-                                    }
+                                // Create a file stream to store the downloaded data.
+                                // This really can be any type of writeable stream.
+                                using (var file = new FileStream(Path.Combine(DownloadDir, attach.Name),
+                                           FileMode.Create, FileAccess.Write, FileShare.None))
+                                {
+                                    // Use the custom extension method below to download the data.
+                                    // The passed progress-instance will receive the download status updates.
+                                    client.DownloadAsync(downloadUrl, file, downloadProgress)
+                                        .Wait();
                                 }
 
                                 if (OverrideFileTime)
