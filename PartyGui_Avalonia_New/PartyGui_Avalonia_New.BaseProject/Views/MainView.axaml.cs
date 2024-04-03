@@ -21,29 +21,31 @@ namespace PartyGui_Avalonia_New.Views;
 
 public partial class MainView : UserControl
 {
-    private readonly Regex attachmentUrlRegex = new(@"\?f=(.*)");
+    private readonly Regex _attachmentUrlRegex = new(@"\?f=(.*)");
 
-    private readonly HttpClient client = new(new HttpClientHandler
+    private readonly HttpClient _client = new(new HttpClientHandler
     {
         AllowAutoRedirect = true,
         AutomaticDecompression = DecompressionMethods.All,
-        SslProtocols = SslProtocols.Tls13
+        SslProtocols = SslProtocols.Tls13,
+        PreAuthenticate = true,
+        MaxConnectionsPerServer = 256
     });
 
     /// <summary>
     ///     Shouldn't really need to be used, only for sanitization of creator URL textbox.
     /// </summary>
-    private readonly Regex creatorUrlRegex = new("https://[A-Za-z0-9]+\\.su/[A-Za-z0-9]+/user/[A-Za-z0-9]+");
+    private readonly Regex _creatorUrlRegex = new("https://[A-Za-z0-9]+\\.su/[A-Za-z0-9]+/user/[A-Za-z0-9]+");
 
     /// <summary>
     ///     Main UI StorageProvider.
     /// </summary>
-    private IStorageProvider StorageProvider;
+    private IStorageProvider _storageProvider;
 
     /// <summary>
     ///     TopMost UI
     /// </summary>
-    private TopLevel window;
+    private TopLevel _window;
 
     /// <summary>
     ///     Public constructor for the view.
@@ -56,7 +58,7 @@ public partial class MainView : UserControl
     /// <summary>
     ///     URL of the creator to scrape content from.
     /// </summary>
-    private string CreatorURL { get; set; } = string.Empty;
+    private string CreatorUrl { get; set; } = string.Empty;
 
     /// <summary>
     ///     Number of creator posts to scrape.
@@ -146,17 +148,17 @@ public partial class MainView : UserControl
     private void Control_OnLoaded(object? sender, RoutedEventArgs e)
     {
         ScrapingManager.InitializeModules();
-        window = TopLevel.GetTopLevel(this) ?? throw new InvalidOperationException();
-        StorageProvider = window.StorageProvider;
-        client.Timeout = TimeSpan.FromMinutes(5);
-        client.DefaultRequestHeaders.Add("User-Agent",
+        _window = TopLevel.GetTopLevel(this) ?? throw new InvalidOperationException();
+        _storageProvider = _window.StorageProvider;
+        _client.Timeout = TimeSpan.FromMinutes(5);
+        _client.DefaultRequestHeaders.Add("User-Agent",
             UserAgentManager.RandomDesktopUserAgent);
-        client.DefaultRequestHeaders.Add("Accept", "*/*");
-        client.DefaultRequestHeaders.Add("Connection", "keep-alive");
-        client.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.5");
-        client.DefaultRequestHeaders.Add("Sec-Fetch-Site", "same-site");
-        client.DefaultRequestHeaders.Add("Sec-Fetch-Mode", "navigate");
-        client.DefaultRequestHeaders.Add("Sec-Fetch-Dest", "document");
+        _client.DefaultRequestHeaders.Add("Accept", "*/*");
+        _client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+        _client.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.5");
+        _client.DefaultRequestHeaders.Add("Sec-Fetch-Site", "same-site");
+        _client.DefaultRequestHeaders.Add("Sec-Fetch-Mode", "navigate");
+        _client.DefaultRequestHeaders.Add("Sec-Fetch-Dest", "document");
     }
 
     /// <summary>
@@ -170,7 +172,7 @@ public partial class MainView : UserControl
         options.Title = "Select Output Directory...";
         options.AllowMultiple = false;
 
-        var pickedFolders = await StorageProvider.OpenFolderPickerAsync(options);
+        var pickedFolders = await _storageProvider.OpenFolderPickerAsync(options);
         if (pickedFolders.Count > 0) OutputDirTextbox.Text = pickedFolders.First().Path.AbsolutePath;
     }
 
@@ -191,8 +193,8 @@ public partial class MainView : UserControl
     /// <param name="e"></param>
     private void CreatorUrlTextbox_OnTextChanged(object? sender, TextChangedEventArgs e)
     {
-        if (CreatorUrlTextbox.Text != null && creatorUrlRegex.IsMatch(CreatorUrlTextbox.Text))
-            CreatorURL = CreatorUrlTextbox.Text;
+        if (CreatorUrlTextbox.Text != null && _creatorUrlRegex.IsMatch(CreatorUrlTextbox.Text))
+            CreatorUrl = CreatorUrlTextbox.Text;
     }
 
     /// <summary>
@@ -248,7 +250,7 @@ public partial class MainView : UserControl
     /// <param name="e"></param>
     private async void ScrapeButton_OnClick(object? sender, RoutedEventArgs e)
     {
-        if (CreatorURL == string.Empty)
+        if (CreatorUrl == string.Empty)
         {
             ShowMessageBox("Creator URL is empty! Please correct this issue to proceed.", "Error", ButtonEnum.Ok,
                 Icon.Error);
@@ -284,7 +286,7 @@ public partial class MainView : UserControl
             // Begin scrape
             var requestedInfo = new List<OrobourosInformation.ModuleContent>
                 { OrobourosInformation.ModuleContent.Subposts };
-            var data = ScrapingManager.ScrapeURL(CreatorURL, requestedInfo, NumberOfPosts);
+            var data = ScrapingManager.ScrapeURL(CreatorUrl, requestedInfo, NumberOfPosts);
             if (data != null)
             {
                 SetProgressBarMaximum(DownloadProgressBar, 100);
@@ -347,8 +349,8 @@ public partial class MainView : UserControl
 
                             // Download URL parsing
                             string downloadUrl;
-                            if (attachmentUrlRegex.IsMatch(attach.URL))
-                                downloadUrl = attachmentUrlRegex.Replace(attach.URL, "");
+                            if (_attachmentUrlRegex.IsMatch(attach.URL))
+                                downloadUrl = _attachmentUrlRegex.Replace(attach.URL, "");
                             else
                                 downloadUrl = attach.URL;
 
@@ -366,7 +368,7 @@ public partial class MainView : UserControl
                                 {
                                     // Use the custom extension method below to download the data.
                                     // The passed progress-instance will receive the download status updates.
-                                    client.DownloadAsync(downloadUrl, file, downloadProgress)
+                                    _client.DownloadAsync(downloadUrl, file, downloadProgress)
                                         .Wait();
                                 }
 
